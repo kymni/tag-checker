@@ -12,7 +12,8 @@ function tagChecker(input) {
   let currTag = '';
   let tags = [];
   let tagOpened = false;
-  for (let i = 0; i < input.length; i++) {
+  let i = 0;
+  while (i < input.length) {
     if (input.charAt(i) === '<') {
       if (!tagOpened) {
         tagOpened = true;
@@ -21,12 +22,11 @@ function tagChecker(input) {
       currTag = '<';
       const restOfStr = input.substring(i + 1, input.length);
       let isOpeningTag = false;
-      let validTag = true;
       for (let j = 0; j < restOfStr.length; j++) {
+        i += 1;
         const tagChar = restOfStr.charAt(j);
         if (tagOpened && tagChar !== '/' && tagChar !== '>' && !(/^[A-Za-z]+$/.test(tagChar))) {
           // not a valid tag so move along
-          validTag = false;
           break;
         }
         if (j === 0 && restOfStr.charAt(j) !== '/') {
@@ -45,9 +45,7 @@ function tagChecker(input) {
               }
               const openingTagArray = tags[tags.length - 1].split('');
               openingTagArray.splice(1, 0, '/');
-              if (validTag) {
-                return `expected ${openingTagArray.join('')} found ${currTag}`;
-              }
+              return `expected ${openingTagArray.join('')} found ${currTag}`;
             }
           } else {
             tags.push(currTag);
@@ -56,6 +54,7 @@ function tagChecker(input) {
         }
       }
     }
+    i += 1;
   }
   // if at end of string and there's an unclosed tag left, return error
   if (tags.length) {
